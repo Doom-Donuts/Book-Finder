@@ -1,0 +1,48 @@
+name: "CI and Build Tests"
+
+on:
+  push:
+    branches:
+      - 'main'
+    tags:
+      - "!**"
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  unit-and-build-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Checkout repository with LFS
+        run: git lfs pull
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install requirements (python)
+        run: |
+          pip install -r requirements.txt
+          pyinstaller --version
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y libxcb1 libxkbcommon0 libxcb-shape0 libxcb-keysyms1 libxcb-image0 libxcb-xkb1 libxcb-icccm4 libxcb-cursor0 libxcb-util1 libxcb-render-util0
+          
+      - name: Linux Build
+        run: |
+          pyinstaller --onefile --windowed --add-data="UI/Themes/*.qss:UI/Themes" --add-data="Backend/Books_Database/BooksDatabase.db:Backend/Books_Database" --name=BookFinder main.py
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-exe
+          path: dist/BookFinder

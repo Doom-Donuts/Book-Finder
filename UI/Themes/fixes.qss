@@ -1,0 +1,11 @@
+QHeaderView::section {
+  padding: 10px;
+  min-height: 20px;
+}
+
+QTextEdit {
+  border: 4px solid;
+  border-radius: 4px;
+}
+
+
