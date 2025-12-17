@@ -1,14 +1,9 @@
-name: "CI and Build Tests"
+name: "CI, Build Tests, CD"
 
 on:
   push:
-    branches:
-      - 'main'
     tags:
-      - "!**"
-  pull_request:
-    branches:
-      - 'main'
+      - "*"
 
 jobs:
   unit-and-build-tests:
