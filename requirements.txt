@@ -4,4 +4,3 @@ pandas
 pytest
 pytest-html
 pytest-cov
-coveragepytest -q
