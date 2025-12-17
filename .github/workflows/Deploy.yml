@@ -1,17 +1,21 @@
-name: "CI and Deploy"
+name: "CI and Build Tests"
 
 on:
   push:
+    branches:
+      - 'main'
     tags:
-      - "*"
+      - "!**"
+  pull_request:
+    branches:
+      - 'main'
 
 jobs:
   unit-and-build-tests:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
-      repository-projects: write
+      pages: write
+      id-token: write
 
     steps:
       - name: Checkout code
@@ -48,16 +52,16 @@ jobs:
             --cov-report=html \
 
       - name: Clear Database For Build
-        run: python3 -c "from Backend.Books_Database.fill_db import clear_db; clear_db()"
+        run: git checkout -- Backend/Books_Database/BooksDatabase.db
 
       - name: Linux Build
         run: |
           pyinstaller --onefile --windowed \
           --add-data="UI/Themes/*.qss:UI/Themes" \
           --add-data="Backend/Books_Database/BooksDatabase.db:Backend/Books_Database" \
-          --add-file="Backend/Books_Database/BooksDatasetClean.csv:Backend/Books_Database" \
+          --add-data="Backend/Books_Database/BooksDatasetClean.csv:Backend/Books_Database" \
           --name=BookFinder main.py
-          
+
       - name: Rename folder
         run: mv dist Application
         
