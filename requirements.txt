@@ -1,3 +1,6 @@
 pyside6
 pyinstaller
 pandas
+pytest
+pytest-html
+pytest-cov
