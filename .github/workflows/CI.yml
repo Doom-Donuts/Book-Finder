@@ -37,9 +37,30 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y libxcb1 libxkbcommon0 libxcb-shape0 libxcb-keysyms1 libxcb-image0 libxcb-xkb1 libxcb-icccm4 libxcb-cursor0 libxcb-util1 libxcb-render-util0
           
+      - name: Fill Database For Testing
+        run: python3 -c "from Backend.Books_Database.fill_db import fill_database; fill_database()"
+
+      - name: Run basic tests
+        run: pytest -q
+
+      - name: Run tests with coverage
+        run: |
+          pytest -q \
+            --cov=. \
+            --cov-report=term \
+            --cov-report=xml \
+            --cov-report=html \
+
+      - name: Clear Database For Build
+        run: python3 -c "from Backend.Books_Database.fill_db import clear_db; clear_db()"
+
       - name: Linux Build
         run: |
-          pyinstaller --onefile --windowed --add-data="UI/Themes/*.qss:UI/Themes" --add-data="Backend/Books_Database/BooksDatabase.db:Backend/Books_Database" --name=BookFinder main.py
+          pyinstaller --onefile --windowed \
+          --add-data="UI/Themes/*.qss:UI/Themes" \
+          --add-data="Backend/Books_Database/BooksDatabase.db:Backend/Books_Database" \
+          --add-file="Backend/Books_Database/BooksDatasetClean.csv:Backend/Books_Database" \
+          --name=BookFinder main.py
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4

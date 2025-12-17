@@ -75,3 +75,22 @@ def fill_database():
 
     conn.close()
 
+def clear_db():
+    conn = sqlite3.connect('Backend/Books_Database/BooksDatabase.db')
+    cursor = conn.cursor()
+
+    #BOOKS
+    cursor.execute("DELETE FROM BOOKS")
+    cursor.execute("DELETE FROM sqlite_sequence WHERE name='BOOKS'")
+
+    cursor.execute("DELETE FROM BOOK_INFO")
+    cursor.execute("DELETE FROM sqlite_sequence WHERE name='BOOK_INFO'")
+
+    cursor.execute("DELETE FROM BOOK_CATEGORIES")
+
+    cursor.execute("DELETE FROM YEARS")
+    cursor.execute("DELETE FROM sqlite_sequence WHERE name='YEARS'")
+
+    conn.commit()
+    conn.close()
+
