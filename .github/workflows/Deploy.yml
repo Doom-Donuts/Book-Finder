@@ -54,12 +54,16 @@ jobs:
         run: |
           pyinstaller --onefile --windowed \
           --add-data="UI/Themes/*.qss:UI/Themes" \
-          --add-data="Backend/Books_Database/BooksDatabase.db:Backend/Books_Database" \
           --add-data="Backend/Books_Database/BooksDatasetClean.csv:Backend/Books_Database" \
           --name=BookFinder main.py
 
       - name: Rename folder
         run: mv dist Application
+
+      - name: Move Database to Correct relative location
+        run: |
+          mkdir -p Application/Backend/Books_Database/
+          cp Backend/Books_Database/BooksDatabase.db Application/Backend/Books_Database/BooksDatabase.db
         
       - name: Create Zip Archive
         run: tar -a -c -f BookFinder.zip Application

@@ -30,7 +30,7 @@ def fill_database():
     df.loc[df["Category"] == " Religion , Religion, Politics & State", "Category"] = "Religion, Politics & State"
 
 
-    conn = sqlite3.connect(resource_path('Backend/Books_Database/BooksDatabase.db'))
+    conn = sqlite3.connect('Backend/Books_Database/BooksDatabase.db')
     cursor = conn.cursor()
 
     #BOOKS
