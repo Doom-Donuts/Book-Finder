@@ -59,7 +59,7 @@ jobs:
           pyinstaller --onefile --windowed \
           --add-data="UI/Themes/*.qss:UI/Themes" \
           --add-data="Backend/Books_Database/BooksDatabase.db:Backend/Books_Database" \
-          --add-file="Backend/Books_Database/BooksDatasetClean.csv:Backend/Books_Database" \
+          --add-data="Backend/Books_Database/BooksDatasetClean.csv:Backend/Books_Database" \
           --name=BookFinder main.py
       
       - name: Upload artifact
