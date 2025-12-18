@@ -4,7 +4,7 @@ from path_fix import resource_path
 from Backend.BooksTable import BooksTable
 import Backend.Buisness_Logic as Logic
 
-#Unit tests for BooksTable(with parameters(except self) in parentheses above the test)
+#Unit tests for functions in BooksTable(with parameters(except self) in parentheses above the test)
 class Test_BooksTable():
   #Some functions will only return one book when given book_id
   #So, these tests are hard coded with specific info of that book
@@ -58,7 +58,7 @@ class Test_BooksTable():
     rows = books.fetch_books_with_year(1986, 10)
     assert len(rows) == 10
 
-#Tests covering functions in Bussiness_Logic
+#Unit tests covering functions in Bussiness_Logic(with parameters in parentheses above the test)
 class Test_BusinessLogic():
   #Test covering get_books_unfiltered()
   def test_gbu(self):
