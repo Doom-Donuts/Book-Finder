@@ -1,8 +1,10 @@
 import pytest
+import sqlite3
+from path_fix import resource_path
 from Backend.BooksTable import BooksTable
 import Backend.Buisness_Logic as Logic
 
-#Unit tests for BooksTable(with parameters(except self) in parentheses above the test)
+#Unit tests for functions in BooksTable(with parameters(except self) in parentheses above the test)
 class Test_BooksTable():
   #Some functions will only return one book when given book_id
   #So, these tests are hard coded with specific info of that book
@@ -56,7 +58,7 @@ class Test_BooksTable():
     rows = books.fetch_books_with_year(1986, 10)
     assert len(rows) == 10
 
-#Tests covering functions in Bussiness_Logic
+#Unit tests covering functions in Bussiness_Logic(with parameters in parentheses above the test)
 class Test_BusinessLogic():
   #Test covering get_books_unfiltered()
   def test_gbu(self):
@@ -67,7 +69,62 @@ class Test_BusinessLogic():
     expected_ans = {"book_id": 10, "Description": None, "Category": " Cooking , General", "Publisher": "Oxmoor House", "Price Starting With ($)": "12.98", "Publish Date (Month)": "June", "Publish Date (Year)": "1986", "score": "", "text": ""}
     assert Logic.fetch_book_info({"book_id": 10}) == expected_ans
 
-#Not implemented yet
   #Test covering Add_Review(book_id, review_score, review_text)
-#  def test_ar_output(self):
-#    assert 0
+  def test_ar(self):
+    expected_ans = {"book_id": 1, "score": 9, "text": "Great Book"}
+    assert Logic.Add_Review(1, 9, "Great Book") == expected_ans
+
+  #Test covering Fetch_Review(book_id) if there is a review
+  def test_fr_exist(self):
+    expected_ans = {"book_id": 1, "score": 9, "text": "Great Book"}
+    assert Logic.Fetch_Review(1) == expected_ans
+
+  #Test covering Fetch_Review(book_id) if there is not a review
+  def test_fr_exist(self):
+    expected_ans = {"score": "", "text": ""}
+    assert Logic.Fetch_Review(2) == expected_ans
+
+  #Test covering Edit_Review(book_id, review_score, review_text)
+  def test_er(self):
+    expected_ans = {"book_id": 1, "score": 10, "text": "Amazing Book"}
+    assert Logic.Edit_Review(1, 10, "Amazing Book") == expected_ans
+
+  #Test covering Search_Books(text)
+  def test_Search_Books(self):
+    expected_ans= [{"book_id": 2, "Title": "The Missing Person", "Authors": "By Grumbach, Doris"}]
+    assert Logic.Search_Books("The Missing Person") == expected_ans
+
+  #Test covering apply_filters(genre, year) when there are no filters
+  def test_af_none(self):
+    assert len(Logic.apply_filters(None, None)) == 100
+
+  #Test covering apply_filters(genre, year) when there is a genre filter
+  def test_af_genre(self):
+    assert len(Logic.apply_filters("General", None)) == 100
+
+  #Test covering apply_filters(genre, year) when there is a year filter
+  def test_af_year(self):
+    assert len(Logic.apply_filters(None, 1986)) == 100
+
+  #Test covering apply_filters(genre, year) when there is a genre and year filter
+  def test_af_both(self):
+    assert len(Logic.apply_filters("General", 1986)) == 100
+
+  #Test covering recommend_books()
+  def test_rb(self):
+    assert len(Logic.recommend_books()) == 100
+    self.delete_review(1)
+
+  #Function to delete a test review
+  def delete_review(self, book_id):
+    #Have this part here since pytest doesn't like classes with init function
+    # Initialize connection to the database file
+    self.db_path = resource_path('Backend/Books_Database/BooksDatabase.db')
+    self.conn = sqlite3.connect(self.db_path,check_same_thread=False)
+    self.conn.row_factory = sqlite3.Row  # This allows column access by name
+
+    with self.conn:
+      cursor = self.conn.cursor()
+      query = "DELETE FROM REVIEWS WHERE book_id = ?"
+      param = [book_id]
+      cursor.execute(query, param)
